@@ -1,5 +1,5 @@
 import pytest
-from conftest import api_checker, test_delete_object, test_upload_object, test_delete_bucket
+from conftest import api_checker, delete_object, upload_object, delete_bucket
 import boto3
 from urls import CloudStorage
 
@@ -8,8 +8,8 @@ from urls import CloudStorage
 class TestsApiBucket:
     def test_object(self):
         test_name = 'Test Object'
-        bucket = test_upload_object()[0]
-        key = test_upload_object()[1]
+        bucket = upload_object()[0]
+        key = upload_object()[1]
         session = boto3.session.Session()
         s3_client = session.client(
             service_name='s3',
@@ -20,7 +20,7 @@ class TestsApiBucket:
 
     def test_list_objects(self):
         test_name = 'Test ListObjects'
-        bucket, expected_key = test_upload_object()
+        bucket, expected_key = upload_object()
         session = boto3.session.Session()
         s3_client = session.client(
             service_name='s3',
@@ -30,5 +30,5 @@ class TestsApiBucket:
         for key in s3_client.list_objects(Bucket=bucket)['Contents']:
             key = key['Key']
         api_checker(200, response, test_name, expected_key, key)
-        test_delete_object(bucket, key)
-        test_delete_bucket(bucket)
+        delete_object(bucket, key)
+        delete_bucket(bucket)

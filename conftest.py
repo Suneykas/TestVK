@@ -42,7 +42,7 @@ def api_session(request):
     print('Testing completed')
 
 
-def test_create_bucket(api_session):
+def create_bucket(api_session):
     test_name = 'create_bucket'
     bucket = random_str
     session = boto3.session.Session()
@@ -61,9 +61,9 @@ def test_create_bucket(api_session):
     return bucket
 
 
-def test_upload_object():
+def upload_object():
     test_name = 'upload_object'
-    bucket = test_create_bucket(api_session)
+    bucket = create_bucket(api_session)
     key = random_str
     session = boto3.session.Session()
     s3_client = session.client(
@@ -76,7 +76,7 @@ def test_upload_object():
     return bucket, key
 
 
-def test_delete_object(bucket, key):
+def delete_object(bucket, key):
     test_name = 'delete_object'
     session = boto3.session.Session()
     s3_client = session.client(
@@ -87,7 +87,7 @@ def test_delete_object(bucket, key):
     api_checker(204, response, test_name)
 
 
-def test_delete_bucket(bucket):
+def delete_bucket(bucket):
     test_name = 'delete_bucket'
     session = boto3.session.Session()
     s3_client = session.client(
