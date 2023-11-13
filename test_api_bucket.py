@@ -18,9 +18,9 @@ class TestsApiBucket:
         response = s3_client.get_object(Bucket=bucket, Key=key)
         api_checker(200, response, test_name)
 
-    def test_list_objects(self):
+    def test_list_objects(self, api_session):
         test_name = 'Test ListObjects'
-        bucket, expected_key = upload_object()
+        bucket, key = upload_object()
         session = boto3.session.Session()
         s3_client = session.client(
             service_name='s3',
@@ -29,6 +29,7 @@ class TestsApiBucket:
         response = s3_client.list_objects(Bucket=bucket)
         for key in s3_client.list_objects(Bucket=bucket)['Contents']:
             key = key['Key']
-        api_checker(200, response, test_name, expected_key, key)
+        api_checker(200, response, test_name, key)
         delete_object(bucket, key)
         delete_bucket(bucket)
+

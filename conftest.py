@@ -4,18 +4,18 @@ from urls import CloudStorage
 import random
 
 
-random_str = str('test-' + str(random.randint(0, 999999)))
+random_str = str('suneev_test-' + str(random.randint(0, 999999)))
 
 
-def api_checker(true_sc, response, test_name=None, expected_key=None, key=None):
+def api_checker(true_sc, response, test_name=None, key=None):
     if response['ResponseMetadata']['HTTPStatusCode'] != true_sc:
         print('\n', test_name, '- NOT Passed. WRONG STATUS CODE. '
                                '\nСurrent Status code is', response['ResponseMetadata']['HTTPStatusCode'],
               '\nСurrent Response is\n', response)
         assert response['ResponseMetadata']['HTTPStatusCode'] == true_sc
-    elif expected_key is not None and key != expected_key:
+    elif key is not None and key != key:
         print('\n', test_name, '- NOT Passed. WRONG KEY. Сurrent Key', key)
-        assert key == expected_key
+        assert key == key
     else:
         print('\n', test_name, '- Passed.\nStatus code is', response['ResponseMetadata']['HTTPStatusCode'],
               '\nResponse is\n', response)
@@ -31,18 +31,12 @@ def api_session(request):
     endpoint_url = request.config.getoption("host_name")
     if endpoint_url == CloudStorage.host:
         print('Start Testing')
-        session = boto3.session.Session()
-        s3_client = session.client(
-            service_name='s3',
-            endpoint_url=CloudStorage.host
-        )
     else:
         raise pytest.UsageError("--host_name should be CloudStorage or another")
-    yield api_session
-    print('Testing completed')
+    yield
 
 
-def create_bucket(api_session):
+def create_bucket():
     test_name = 'create_bucket'
     bucket = random_str
     session = boto3.session.Session()
@@ -61,9 +55,9 @@ def create_bucket(api_session):
     return bucket
 
 
-def upload_object():
+def upload_object(bucket=None, key=None):
     test_name = 'upload_object'
-    bucket = create_bucket(api_session)
+    bucket = create_bucket()
     key = random_str
     session = boto3.session.Session()
     s3_client = session.client(
